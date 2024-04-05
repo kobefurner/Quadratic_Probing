@@ -1,10 +1,23 @@
-#ifndef ORDEREDLINKEDLIST_H
-#define ORDEREDLINKEDLIST_H
+#ifndef HASHTABLE_H
+#define HASHTABLE_H
 #include <iostream>
+#include <vector>
 
 class Hashtable
 {
    private:
+        struct Node {
+                int key;
+                int value;
+                bool isActive;
+
+                Node(int k = int{}, int v = int{}) : key{k}, value{v}, isActive{true} {}
+        };
+
+      std::vector<Node> array;
+      int currentSize;
+      double loadFactorThreshold;  
+        
       int hash(int v) const;
 public:
 	Hashtable();
@@ -25,5 +38,7 @@ public:
         void clear();
         static bool isPrime(int n);
         static int nextPrime(int n);
+        void resize(int);
+        void insertWithoutResizing(int value, bool isResizing = false);
 };
-#endif
+#endif 

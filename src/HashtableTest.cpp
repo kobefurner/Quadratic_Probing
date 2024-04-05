@@ -187,7 +187,7 @@ bool testIndexOf(){
    table.insert(35);
    passed &= checkTest("IndexOf 5", table.indexOf(35), 10);
    return passed;
-}
+} 
 
 bool testResize(){
    bool passed = true;
