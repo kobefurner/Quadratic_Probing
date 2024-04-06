@@ -9,7 +9,6 @@ Hashtable::Hashtable() {
     currentSize = 0;
     loadFactorThreshold = 0.65;
 
-    // Initialize all elements to inactive
     for (auto &entry : array) {
         entry.isActive = false;
     }
@@ -82,8 +81,8 @@ void Hashtable::insert(int value) {
         if (i >= array.size()) {
             resize(nextPrime(2 * array.size()));
             index = hash(value) % array.size();
-            initialIndex = index; // Update initialIndex after resizing
-            i = 0; // Reset i after resizing
+            initialIndex = index;
+            i = 0;
         }
     }
 
@@ -92,11 +91,6 @@ void Hashtable::insert(int value) {
         currentSize++;
     }
 
-    // Check load factor after insertion
-    double loadFactor = (double)currentSize / array.size();
-    if (loadFactor > loadFactorThreshold) {
-        resize(nextPrime(2 * array.size()));
-    }
 }
 
 void Hashtable::resize(int newSize) {
@@ -108,41 +102,31 @@ void Hashtable::resize(int newSize) {
         entry.isActive = false;
     }
 
-    currentSize = 0;  // Reset currentSize
+    currentSize = 0;
 
     for (auto &entry : oldArray) {
         if (entry.isActive) {
             insertWithoutResizing(entry.value, true);
         }
     }
-
-    if (currentSize >= array.size()) {
-        throw std::runtime_error("Hashtable is full after resizing");
-    }
 }
 
-void Hashtable::insertWithoutResizing(int value, bool isResizing)
-{
-   if (!isResizing && currentSize >= array.size()) {
-      throw std::runtime_error("Hashtable is full in insertWithoutResizing");
-   }
+void Hashtable::insertWithoutResizing(int value, bool isResizing) {
+    int initialIndex = hash(value) % array.size();
+    int index = initialIndex;
+    int i = 0;
 
-   int initialIndex = hash(value) % array.size();
-   int index = initialIndex;
-   int i = 0;
+    while (array[index].isActive && array[index].value != value) {
+        i++;
+        index = (initialIndex + i * i) % array.size();
+    }
 
-   while (array[index].isActive && array[index].value != value) {
-      i++;
-      index = (initialIndex + i * i) % array.size();
-      if (i >= array.size()) {
-         resize(nextPrime(2 * array.size()));
-      }
-   }
-
-   if (!array[index].isActive || array[index].value != value) {
-      array[index] = Node(value, value);
-      currentSize++;
-   }
+    if (!array[index].isActive) {
+        array[index] = Node(value, value);
+        if (!isResizing) {
+            currentSize++;
+        }
+    }
 }
 
 void Hashtable::remove(int value) {
@@ -150,15 +134,9 @@ void Hashtable::remove(int value) {
     int index = initialIndex;
     int i = 0;
 
-    while (array[index].isActive || array[index].value != value) {
-        if (array[index].value == value) {
-            break;
-        }
+    while (array[index].isActive && array[index].value != value) {
         i++;
         index = (initialIndex + i * i) % array.size();
-        if (i > array.size()) {
-            throw std::runtime_error("Hashtable is full in remove function");
-        }
     }
 
     if (array[index].isActive && array[index].value == value) {

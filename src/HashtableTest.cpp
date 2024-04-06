@@ -14,7 +14,7 @@ using std::stoi;
 
 
 template <typename elemType>
-bool checkTest(string testName, elemType whatItShouldBe, elemType whatItIs);
+ bool checkTest(string testName, elemType whatItShouldBe, elemType whatItIs);
 bool testConstructor();
 bool testInsert();
 bool testRemove();
